@@ -1,7 +1,7 @@
 {
   "name": "@windranger-io/windranger-mass-delegation-api-server",
   "version": "0.0.3",
-  "description": "Everything you need for creating Solidity smart contract with TypeScript testing",
+  "description": "Managing the delegation of voting power between addresses and provides querying of an address' voting power.",
   "license": "Apache-2.0",
   "private": false,
   "directories": {
@@ -34,6 +34,8 @@
     "@types/node": "^17.0.6",
     "@typescript-eslint/eslint-plugin": "5.32.0",
     "@typescript-eslint/parser": "5.32.0",
+    "aws-sdk": "^2.1212.0",
+    "aws-sdk-mock": "^5.7.0",
     "chai": "4.3.6",
     "chai-as-promised": "^7.1.1",
     "eslint": "8.21.0",

@@ -1,7 +1,9 @@
 import {expect} from 'chai'
+import { handler } from "../src/handler"
 
-describe('Empty test', () => {
-    it('equality', () => {
-        expect(1).equals(1)
+describe('Lambda function', () => {
+    it('should return with programming cliché', async () => {
+        const result = await handler()
+        expect(result).equals('Hello world')
     })
 })
