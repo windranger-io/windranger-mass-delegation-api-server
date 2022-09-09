@@ -5,7 +5,7 @@ import {Context} from 'aws-lambda'
 import {mock, instance, when} from 'ts-mockito'
 
 describe('Lambda', () => {
-    it('parses query parameters', () => {
+    it('parses query parameters', async () => {
         const event = mock<APIGatewayProxyEvent>()
         when(event.queryStringParameters).thenReturn({
             ['first']: 'one',

@@ -13,14 +13,13 @@ import {log} from '../config/logging'
 export const handler = async (
     event: APIGatewayProxyEvent,
     context: Context
+    // eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<APIGatewayProxyResult> => {
     log.info(
         'handler id: %s, name: %s',
         context.awsRequestId,
         context.functionName
     )
-
-    //TODO get connection to database
 
     const queries = JSON.stringify(event.queryStringParameters)
     return {
