@@ -1,5 +1,5 @@
 import {expect} from 'chai'
-import { handler } from "../src/handler"
+import {handler} from '../src/handler'
 
 describe('Lambda function', () => {
     it('should return with programming cliché', async () => {
