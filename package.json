@@ -20,8 +20,7 @@
     "developer-tools"
   ],
   "scripts": {
-    "build": "hardhat compile",
-    "clean": "hardhat clean",
+    "build": "tsc -p .",
     "format": "prettier --ignore-unknown --write \"**/*.ts\"",
     "lint": "eslint . --ext .ts",
     "prepare": "husky install",
