@@ -2,6 +2,8 @@ import {
     APIGatewayProxyEvent,
     APIGatewayProxyResult
 } from 'aws-lambda/trigger/api-gateway-proxy'
+import {Context} from 'aws-lambda'
+import {log} from '../config/logging'
 
 /**
  * Shape of the AWS Gateway event the handler has available
@@ -9,8 +11,15 @@ import {
  */
 
 export const handler = async (
-    event: APIGatewayProxyEvent
+    event: APIGatewayProxyEvent,
+    context: Context
 ): Promise<APIGatewayProxyResult> => {
+    log.info(
+        'handler id: %s, name: %s',
+        context.awsRequestId,
+        context.functionName
+    )
+
     //TODO get connection to database
 
     const queries = JSON.stringify(event.queryStringParameters)
