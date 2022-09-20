@@ -4,7 +4,7 @@ CREATE TABLE Delegation
     token_address     CHAR(20),
     delegator_address CHAR(20),
     delegatee_address CHAR(20),
-    proof             VARCHAR,
+    proof             TEXT,
     delegated_weight  BIGINT,
     delegated_block   BIGINT,
     PRIMARY KEY (token_address,
@@ -31,11 +31,4 @@ CREATE TABLE Delegators
     trie_root         CHAR(32),
     delegated_block   BIGINT,
     PRIMARY KEY (token_address, delegator_address)
-);
-
-
-CREATE TABLE Token
-(
-    CHAR(20) token_address PRIMARY KEY,
-    CHAR(20) deployed_instance
 );
