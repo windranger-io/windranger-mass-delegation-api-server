@@ -7,7 +7,7 @@ import {Pool} from 'pg'
 
 const dbUser = 'unit_test_user'
 const dbPassword = 'unit-test-p@ssw0rd'
-const dbName = 'MassDelegation'
+const dbName = 'massdelegation'
 const dbHost = 'localhost'
 
 describe('Lambda', () => {
@@ -21,7 +21,7 @@ describe('Lambda', () => {
     })
 
     before(async () => {
-        await postgres.query('  CREATE DATABASE MassDelegation')
+        await postgres.query(`CREATE DATABASE ${dbName}`)
 
         process.env = {...env}
         process.env.databaseUser = dbUser
@@ -34,7 +34,7 @@ describe('Lambda', () => {
     after(async () => {
         process.env = env
 
-        await postgres.query('DROP DATABASE MassDelegation')
+        await postgres.query(`DROP DATABASE ${dbName}`)
     })
 
     it('parses query parameters', async () => {
