@@ -4,7 +4,7 @@ import {
 } from 'aws-lambda/trigger/api-gateway-proxy'
 import {Context} from 'aws-lambda'
 import {log} from '../config/logging'
-import {pool} from './db/db-pool'
+import {Database} from './db/database'
 import {throwError} from './error'
 
 /**
@@ -25,13 +25,13 @@ export const handler = async (
 
     const queryStringParameters =
         event.queryStringParameters ??
-        throwError('Missing QueryString parameters')
+        throwError('Missing query string parameters')
 
     const address =
         queryStringParameters.tokenAddress ??
-        throwError('Missing TokenAddress parameter')
+        throwError('Missing tokenAddress parameter')
 
-    const result = await pool.query({
+    const result = await Database.pool().query({
         name: 'fetch-delegation-by-token-address',
         text: 'SELECT * FROM Delegation WHERE token_address = $1',
         values: [address]

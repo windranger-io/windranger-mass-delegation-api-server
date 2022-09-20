@@ -5,11 +5,25 @@ import {Context} from 'aws-lambda'
 import {mock, instance, when} from 'ts-mockito'
 
 describe('Lambda', () => {
+    const env = process.env
+
+    before(() => {
+        process.env = {...env}
+        process.env.databaseUser = 'db-user'
+        process.env.databasePassword = 'p@ssw0rd'
+        process.env.databaseName = 'mass-delegation'
+        process.env.databaseHost = 'db-host'
+        process.env.databasePort = '1237'
+    })
+
+    after(() => {
+        process.env = env
+    })
+
     it('parses query parameters', async () => {
         const event = mock<APIGatewayProxyEvent>()
         when(event.queryStringParameters).thenReturn({
-            ['first']: 'one',
-            ['second']: 'two'
+            ['tokenAddress']: 'one'
         })
 
         const context = mock<Context>()
