@@ -33,7 +33,7 @@ export const handler = async (
 
     const result = await Database.pool().query({
         name: 'fetch-delegation-by-token-address',
-        text: 'SELECT * FROM Delegation WHERE token_address = $1',
+        text: 'SELECT * FROM delegation WHERE token_address = $1',
         values: [address]
     })
 
