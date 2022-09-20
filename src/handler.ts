@@ -12,6 +12,55 @@ import {throwError} from './error'
  * https://github.com/awsdocs/aws-lambda-developer-guide/blob/main/sample-apps/nodejs-apig/event.json
  */
 
+export const handlerVotingPower = async (
+    event: APIGatewayProxyEvent,
+    context: Context
+    // eslint-disable-next-line @typescript-eslint/require-await
+): Promise<APIGatewayProxyResult> => {
+    log.info(
+        'handler id: %s, name: %s',
+        context.awsRequestId,
+        context.functionName
+    )
+
+    const queries = JSON.stringify(event.queryStringParameters)
+    const method = JSON.stringify(event.httpMethod)
+    const path = JSON.stringify(event.path)
+    const body = JSON.stringify(event.body)
+
+    const obj = JSON.parse(body) as any
+
+    const snapshot =
+        event.queryStringParameters ??
+        throwError('Missing query string parameters')
+
+    return {
+        statusCode: 200,
+        body: `Method: ${method} Path: ${path} Queries: ${queries.toString()} Body: ${body.toString()}`
+    }
+}
+
+export const handlerMassDelegate = async (
+    event: APIGatewayProxyEvent,
+    context: Context
+    // eslint-disable-next-line @typescript-eslint/require-await
+): Promise<APIGatewayProxyResult> => {
+    log.info(
+        'handler id: %s, name: %s',
+        context.awsRequestId,
+        context.functionName
+    )
+
+    const queries = JSON.stringify(event.queryStringParameters)
+    const method = JSON.stringify(event.httpMethod)
+    const path = JSON.stringify(event.path)
+
+    return {
+        statusCode: 200,
+        body: `Method: ${method} Path: ${path} Queries: ${queries.toString()}`
+    }
+}
+
 export const handler = async (
     event: APIGatewayProxyEvent,
     context: Context
@@ -38,9 +87,17 @@ export const handler = async (
     })
 
     const rows = result.rows
+    const method = JSON.stringify(event.httpMethod)
+    const path = JSON.stringify(event.path)
+
+    if (method === 'POST' && path === '/voting-power') {
+        return handlerVotingPower(event, context)
+    } else if (method === 'POST' && path === '/mass-delegate') {
+        return handlerMassDelegate(event, context)
+    }
 
     return {
         statusCode: 200,
-        body: `Queries: ${rows.toString()}`
+        body: `Method: ${method.toString()} Path: ${path.toString()} Queries: ${rows.toString()}`
     }
 }

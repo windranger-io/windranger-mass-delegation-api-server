@@ -6,6 +6,7 @@ import {mock, instance, when} from 'ts-mockito'
 import {Client, ClientConfig} from 'pg'
 import * as fs from 'fs'
 import {Database} from '../src/db/database'
+import * as testData from './testData'
 
 const dbUser = 'unit_test_user'
 const dbPassword = 'unit-test-p@ssw0rd'
@@ -58,6 +59,8 @@ describe('Lambda', () => {
         when(event.queryStringParameters).thenReturn({
             ['tokenAddress']: 'one'
         })
+        when(event.path).thenReturn('/')
+        when(event.httpMethod).thenReturn('GET')
 
         const context = mock<Context>()
         when(context.awsRequestId).thenReturn('199')
@@ -68,7 +71,30 @@ describe('Lambda', () => {
         // TODO populate with test data for comparision!
         expect(result).deep.equals({
             statusCode: 200,
-            body: 'Queries: '
+            body: 'Method: "GET" Path: "/" Queries: '
+        })
+    })
+    it('answers voting power', async () => {
+        const event = mock<APIGatewayProxyEvent>()
+        when(event.queryStringParameters).thenReturn({
+            ['tokenAddress']: 'one'
+        })
+        when(event.path).thenReturn('/')
+        when(event.httpMethod).thenReturn('GET')
+
+        const jsonStr: string = testData.votingPowerReq1 as any
+        when(event.body).thenReturn(jsonStr)
+
+        const context = mock<Context>()
+        when(context.awsRequestId).thenReturn('199')
+        when(context.functionName).thenReturn('The best handler ever!')
+
+        const result = await handler(instance(event), instance(context))
+
+        // TODO populate with test data for comparision!
+        expect(result).deep.equals({
+            statusCode: 200,
+            body: 'Method: "GET" Path: "/" Queries: '
         })
     })
 })
