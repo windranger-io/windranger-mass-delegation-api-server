@@ -3,21 +3,38 @@ import {handler} from '../src/handler'
 import {APIGatewayProxyEvent} from 'aws-lambda/trigger/api-gateway-proxy'
 import {Context} from 'aws-lambda'
 import {mock, instance, when} from 'ts-mockito'
+import {Pool} from 'pg'
+
+const dbUser = 'unit_test_user'
+const dbPassword = 'unit-test-p@ssw0rd'
+const dbName = 'MassDelegation'
+const dbHost = 'localhost'
 
 describe('Lambda', () => {
     const env = process.env
-
-    before(() => {
-        process.env = {...env}
-        process.env.databaseUser = 'db-user'
-        process.env.databasePassword = 'p@ssw0rd'
-        process.env.databaseName = 'mass-delegation'
-        process.env.databaseHost = 'db-host'
-        process.env.databasePort = '1237'
+    const postgres = new Pool({
+        user: dbUser,
+        password: dbPassword,
+        database: 'postgres',
+        host: dbHost,
+        port: 5432
     })
 
-    after(() => {
+    before(async () => {
+        await postgres.query('  CREATE DATABASE MassDelegation')
+
+        process.env = {...env}
+        process.env.databaseUser = dbUser
+        process.env.databasePassword = dbPassword
+        process.env.databaseName = dbName
+        process.env.databaseHost = dbHost
+        process.env.databasePort = '5432'
+    })
+
+    after(async () => {
         process.env = env
+
+        await postgres.query('DROP DATABASE MassDelegation')
     })
 
     it('parses query parameters', async () => {
