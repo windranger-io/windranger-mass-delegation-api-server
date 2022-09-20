@@ -23,20 +23,26 @@ export const handlerVotingPower = async (
         context.functionName
     )
 
-    const queries = JSON.stringify(event.queryStringParameters)
-    const method = JSON.stringify(event.httpMethod)
-    const path = JSON.stringify(event.path)
-    const body = JSON.stringify(event.body)
+    const reqBody = event.body || ''
 
-    const obj = JSON.parse(body) as any
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const obj: {[id: string]: string | string[] | number} = JSON.parse(reqBody)
 
-    const snapshot =
-        event.queryStringParameters ??
-        throwError('Missing query string parameters')
+    const addresses: string[] =
+        (obj.addresses as string[]) ??
+        (throwError('Missing body "addresses" parameter') as unknown)
 
+    const scores = []
+    for (const addr of addresses) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const addrDict: {[id: string]: string | number} = {address: addr}
+        addrDict.score = 1
+        scores.push(addrDict)
+    }
+    const resp = {score: scores}
     return {
         statusCode: 200,
-        body: `Method: ${method} Path: ${path} Queries: ${queries.toString()} Body: ${body.toString()}`
+        body: JSON.stringify(resp)
     }
 }
 
@@ -87,8 +93,8 @@ export const handler = async (
     })
 
     const rows = result.rows
-    const method = JSON.stringify(event.httpMethod)
-    const path = JSON.stringify(event.path)
+    const method = event.httpMethod
+    const path = event.path
 
     if (method === 'POST' && path === '/voting-power') {
         return handlerVotingPower(event, context)
@@ -98,6 +104,6 @@ export const handler = async (
 
     return {
         statusCode: 200,
-        body: `Method: ${method.toString()} Path: ${path.toString()} Queries: ${rows.toString()}`
+        body: `Method: "${method.toString()}" Path: "${path.toString()}" Queries: ${rows.toString()}`
     }
 }

@@ -1,4 +1,4 @@
-export const votingPowerReq1 = `{
+export const votingPowerRequest1 = `{
 "options":     {
         "api": "https://test-url.for-snapshot.com:8000",
         "symbol": "BIT",
@@ -8,11 +8,24 @@ export const votingPowerReq1 = `{
 "addresses": [
     "0xEA2E9cEcDFF8bbfF107a349aDB9Ad0bd7b08a7B7",
     "0x3c4B8C52Ed4c29eE402D9c91FfAe1Db2BAdd228D",
-    "0xd649bACfF66f1C85618c5376ee4F38e43eE53b63",
-    "0x726022a9fe1322fA9590FB244b8164936bB00489",
-    "0xc6665eb39d2106fb1DBE54bf19190F82FD535c19",
-    "0x6ef2376fa6e12dabb3a3ed0fb44e4ff29847af68"
+    "0xd649bACfF66f1C85618c5376ee4F38e43eE53b63"
 ],
 "snapshot": 11437846
 }
 `
+
+export const votingPowerResponse1 = `{
+"score": [
+    {
+    "address": "0xEA2E9cEcDFF8bbfF107a349aDB9Ad0bd7b08a7B7",
+    "score": 1
+    },
+    {
+    "address": "0x3c4B8C52Ed4c29eE402D9c91FfAe1Db2BAdd228D",
+    "score": 1
+    },
+    {
+    "address": "0xd649bACfF66f1C85618c5376ee4F38e43eE53b63",
+    "score": 1
+}]
+}`

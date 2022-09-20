@@ -79,10 +79,10 @@ describe('Lambda', () => {
         when(event.queryStringParameters).thenReturn({
             ['tokenAddress']: 'one'
         })
-        when(event.path).thenReturn('/')
-        when(event.httpMethod).thenReturn('GET')
+        when(event.path).thenReturn('/voting-power')
+        when(event.httpMethod).thenReturn('POST')
 
-        const jsonStr: string = testData.votingPowerReq1 as any
+        const jsonStr: string = testData.votingPowerRequest1
         when(event.body).thenReturn(jsonStr)
 
         const context = mock<Context>()
@@ -92,9 +92,12 @@ describe('Lambda', () => {
         const result = await handler(instance(event), instance(context))
 
         // TODO populate with test data for comparision!
+        const expectedResponse = JSON.stringify(
+            JSON.parse(testData.votingPowerResponse1)
+        )
         expect(result).deep.equals({
             statusCode: 200,
-            body: 'Method: "GET" Path: "/" Queries: '
+            body: expectedResponse
         })
     })
 })
