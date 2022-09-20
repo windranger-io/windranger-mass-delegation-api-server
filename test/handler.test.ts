@@ -100,6 +100,32 @@ describe('Lambda', () => {
             body: expectedResponse
         })
     })
+    it('answers mass delegate', async () => {
+        const event = mock<APIGatewayProxyEvent>()
+        when(event.queryStringParameters).thenReturn({
+            ['tokenAddress']: 'one'
+        })
+        when(event.path).thenReturn('/mass-delegate')
+        when(event.httpMethod).thenReturn('POST')
+
+        const jsonStr: string = testData.massDelegateRequest1
+        when(event.body).thenReturn(jsonStr)
+
+        const context = mock<Context>()
+        when(context.awsRequestId).thenReturn('199')
+        when(context.functionName).thenReturn('The best handler ever!')
+
+        const result = await handler(instance(event), instance(context))
+
+        // TODO populate with test data for comparision!
+        const expectedResponse = JSON.stringify(
+            JSON.parse(testData.massDelegateResponse1)
+        )
+        expect(result).deep.equals({
+            statusCode: 200,
+            body: expectedResponse
+        })
+    })
 })
 
 async function query(dbConfig: ClientConfig, sql: string): Promise<void> {

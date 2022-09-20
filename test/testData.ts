@@ -29,3 +29,35 @@ export const votingPowerResponse1 = `{
     "score": 1
 }]
 }`
+
+export const massDelegateRequest1 = `{
+    "content": {
+      "network": "1",
+      "delegator": "0xdededededededededededededededededededede",
+      "delegatees": [
+              {
+                  "address" : "0xdededededededededededededededededededede",
+                  "weight" : "95"
+              },
+              {
+                  "address" : "0xd649bACfF66f1C85618c5376ee4F38e43eE53b63",
+                  "weight" : "3"
+              },
+              {
+                  "address" : "0xEA2E9cEcDFF8bbfF107a349aDB9Ad0bd7b08a7B7",
+                  "weight" : "2"
+              }
+      ],
+      "total_weight" : "100",
+      "snapshot": 11437846
+    }, 
+    "permit" : "SIGNATURE TO BE INCLUDED"
+  }
+`
+
+export const massDelegateResponse1 = `{
+    "status": "ok",
+    "blockNumber": 11437846,
+    "delegator": "0xdededededededededededededededededededede",
+    "numberOfDelegatees": "3"
+}`

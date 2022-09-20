@@ -6,6 +6,7 @@ import {Context} from 'aws-lambda'
 import {log} from '../config/logging'
 import {Database} from './db/database'
 import {throwError} from './error'
+import { String } from 'aws-sdk/clients/codepipeline'
 
 /**
  * Shape of the AWS Gateway event the handler has available
@@ -57,13 +58,28 @@ export const handlerMassDelegate = async (
         context.functionName
     )
 
-    const queries = JSON.stringify(event.queryStringParameters)
-    const method = JSON.stringify(event.httpMethod)
-    const path = JSON.stringify(event.path)
+    const reqBody = event.body || ''
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any
+    const obj: {[id: string]: string | string[] | number | any} =
+        JSON.parse(reqBody)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const delegateesLen = obj.content.delegatees.length as number
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const delegator: string = obj.content.delegator as string
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const blockNumber: number = obj.content.snapshot as number
+
+    const resp = {
+        status: 'ok',
+        blockNumber,
+        delegator,
+        numberOfDelegatees: delegateesLen.toString()
+    }
     return {
         statusCode: 200,
-        body: `Method: ${method} Path: ${path} Queries: ${queries.toString()}`
+        body: JSON.stringify(resp)
     }
 }
 
