@@ -4,6 +4,8 @@ import {
 } from 'aws-lambda/trigger/api-gateway-proxy'
 import {Context} from 'aws-lambda'
 import {log} from '../config/logging'
+import {pool} from './db/db-pool'
+import {throwError} from './error'
 
 /**
  * Shape of the AWS Gateway event the handler has available
@@ -21,9 +23,24 @@ export const handler = async (
         context.functionName
     )
 
-    const queries = JSON.stringify(event.queryStringParameters)
+    const queryStringParameters =
+        event.queryStringParameters ??
+        throwError('Missing QueryString parameters')
+
+    const address =
+        queryStringParameters.tokenAddress ??
+        throwError('Missing TokenAddress parameter')
+
+    const result = await pool.query({
+        name: 'fetch-delegation-by-token-address',
+        text: 'SELECT * FROM Delegation WHERE token_address = $1',
+        values: [address]
+    })
+
+    const rows = result.rows
+
     return {
         statusCode: 200,
-        body: `Queries: ${queries}`
+        body: `Queries: ${rows.toString()}`
     }
 }
