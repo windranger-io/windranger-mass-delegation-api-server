@@ -3,15 +3,42 @@ import {
     APIGatewayProxyResult
 } from 'aws-lambda/trigger/api-gateway-proxy'
 import {Context} from 'aws-lambda'
+import {ethers} from 'ethers'
 import {log} from '../config/logging'
 import {Database} from './db/database'
 import {throwError} from './error'
-import { String } from 'aws-sdk/clients/codepipeline'
+import * as abi from './abi'
+import { stringMap } from 'aws-sdk/clients/backup'
+
 
 /**
  * Shape of the AWS Gateway event the handler has available
  * https://github.com/awsdocs/aws-lambda-developer-guide/blob/main/sample-apps/nodejs-apig/event.json
  */
+
+const getPriorBalanceOf = (
+    walletAddress: stringMap,
+    blockNumber: number
+): number => {
+    const provider = new ethers.providers.InfuraProvider(
+        'rinkeby',
+        'INFURA_KEY'
+    )
+    // RINKEBY COMP-like token
+    const tokenContract: string =
+        '0xCB198597184804f175Dc7b562b0b5AF0793e9176' as string
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const contract = new ethers.Contract(
+        abi.compLikeABI,
+        tokenContract,
+        provider
+    )
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const result: number = contract.methods
+        .balanceOf(walletAddress, {blockTag: blockNumber})
+        .call()
+    return result
+}
 
 export const handlerVotingPower = async (
     event: APIGatewayProxyEvent,
