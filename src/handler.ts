@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
     APIGatewayProxyEvent,
     APIGatewayProxyResult
@@ -9,6 +10,7 @@ import {Database} from './db/database'
 import {throwError} from './error'
 import * as abi from './abi'
 import { stringMap } from 'aws-sdk/clients/backup'
+import { threadId } from 'worker_threads'
 
 
 /**
@@ -16,10 +18,10 @@ import { stringMap } from 'aws-sdk/clients/backup'
  * https://github.com/awsdocs/aws-lambda-developer-guide/blob/main/sample-apps/nodejs-apig/event.json
  */
 
-const getPriorBalanceOf = async (
+const getPriorVotingPowerOf = async (
     walletAddress: string,
     blockNumber: number
-): Promise<string> => {
+): Promise<number> => {
     const provider = new ethers.providers.InfuraProvider(
         'rinkeby',
         'INFURA_KEY'
@@ -34,14 +36,50 @@ const getPriorBalanceOf = async (
         provider
     )
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const result: string = ethers.utils.formatEther(
-        //await contract.balanceOf(walletAddress, {blockTag: 'latest'}) // INFURA requires use of a paid tier to access archive data blockTag 
+    const result: number = parseInt(ethers.utils.formatEther(
         await contract.getPriorVotes(walletAddress, blockNumber)
+        ))
+    return result
+}
+
+const getCombinedVotingPowerOf = async (
+    walletAddress: string,
+    blockNumber: number
+): Promise<number> => {
+    const provider = new ethers.providers.AlchemyProvider(
+        'rinkeby',
+        'WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ'
+        // WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ alchemy
+        // 890b63f3265f4331ae435bef1c0869b8 infura
+    )
+    // RINKEBY COMP-like token
+    const tokenContract: string =
+        '0xCB198597184804f175Dc7b562b0b5AF0793e9176' as string
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const contract = new ethers.Contract(
+        tokenContract,
+        abi.compLikeABI,
+        provider
+    )
+    let result = 0
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+    const delegatee: string = await contract.delegates(walletAddress)
+    if (delegatee === ethers.constants.AddressZero) {
+        result += parseInt(
+            ethers.utils.formatEther(
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+                await contract.balanceOf(walletAddress, {
+                    blockTag: blockNumber
+                })
+            )
         )
-    //, {
-    //    'blockTag: blockNumber
-    //})
-    console.log(result)
+    }
+    result += parseInt(
+        ethers.utils.formatEther(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            await contract.getPriorVotes(walletAddress, blockNumber)
+        )
+    )
     return result
 }
 
@@ -72,7 +110,7 @@ export const handlerVotingPower = async (
     for (const addr of addresses) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const addrDict: {[id: string]: string | number} = {address: addr}
-        addrDict.score = parseInt(await getPriorBalanceOf(addr, blockNumber))
+        addrDict.score = await getCombinedVotingPowerOf(addr, blockNumber)
         scores.push(addrDict)
     }
     const resp = {score: scores}

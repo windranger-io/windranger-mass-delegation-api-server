@@ -8,9 +8,10 @@ export const votingPowerRequest1 = `{
 "addresses": [
     "0x287c1b65992aAC3Ff67aDE9FeB9F3A73289E7277",
     "0x4F6b3B68Fde374aA0B14967E52CF3443Af5Dd3a5",
-    "0xA78905e37CE42CE51D906b7A277363993Abb4598"
+    "0xA78905e37CE42CE51D906b7A277363993Abb4598",
+    "0xdec37483304e47566C3Bf1d691c1c5AdD631231d"
 ],
-"snapshot": 11425094
+"snapshot": 11425892
 }
 `
 
@@ -27,7 +28,12 @@ export const votingPowerResponse1 = `{
     {
     "address": "0xA78905e37CE42CE51D906b7A277363993Abb4598",
     "score": 1000000000
-}]
+    },
+    {
+        "address": "0xdec37483304e47566C3Bf1d691c1c5AdD631231d",
+        "score": 500000
+        }
+    ]
 }`
 
 export const massDelegateRequest1 = `{
@@ -49,7 +55,7 @@ export const massDelegateRequest1 = `{
               }
       ],
       "total_weight" : "100",
-      "snapshot": 11425094
+      "snapshot": 11425892
     }, 
     "permit" : "SIGNATURE TO BE INCLUDED"
   }
@@ -57,7 +63,7 @@ export const massDelegateRequest1 = `{
 
 export const massDelegateResponse1 = `{
     "status": "ok",
-    "blockNumber": 11425094,
+    "blockNumber": 11425892,
     "delegator": "0xdededededededededededededededededededede",
     "numberOfDelegatees": "3"
 }`
