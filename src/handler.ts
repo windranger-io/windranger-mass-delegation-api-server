@@ -9,9 +9,6 @@ import {log} from '../config/logging'
 import {Database} from './db/database'
 import {throwError} from './error'
 import * as abi from './abi'
-import { stringMap } from 'aws-sdk/clients/backup'
-import { threadId } from 'worker_threads'
-
 
 /**
  * Shape of the AWS Gateway event the handler has available
@@ -35,10 +32,12 @@ const getPriorVotingPowerOf = async (
         abi.compLikeABI,
         provider
     )
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const result: number = parseInt(ethers.utils.formatEther(
-        await contract.getPriorVotes(walletAddress, blockNumber)
-        ))
+    const result: number = parseInt(
+        ethers.utils.formatEther(
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+            await contract.getPriorVotes(walletAddress, blockNumber)
+        )
+    )
     return result
 }
 
@@ -48,9 +47,7 @@ const getCombinedVotingPowerOf = async (
 ): Promise<number> => {
     const provider = new ethers.providers.AlchemyProvider(
         'rinkeby',
-        'WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ'
-        // WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ alchemy
-        // 890b63f3265f4331ae435bef1c0869b8 infura
+        'ALCHEMY_KEY'
     )
     // RINKEBY COMP-like token
     const tokenContract: string =
