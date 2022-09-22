@@ -16,10 +16,10 @@ import { stringMap } from 'aws-sdk/clients/backup'
  * https://github.com/awsdocs/aws-lambda-developer-guide/blob/main/sample-apps/nodejs-apig/event.json
  */
 
-const getPriorBalanceOf = (
-    walletAddress: stringMap,
+const getPriorBalanceOf = async (
+    walletAddress: string,
     blockNumber: number
-): number => {
+): Promise<string> => {
     const provider = new ethers.providers.InfuraProvider(
         'rinkeby',
         'INFURA_KEY'
@@ -29,14 +29,19 @@ const getPriorBalanceOf = (
         '0xCB198597184804f175Dc7b562b0b5AF0793e9176' as string
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const contract = new ethers.Contract(
-        abi.compLikeABI,
         tokenContract,
+        abi.compLikeABI,
         provider
     )
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
-    const result: number = contract.methods
-        .balanceOf(walletAddress, {blockTag: blockNumber})
-        .call()
+    const result: string = ethers.utils.formatEther(
+        //await contract.balanceOf(walletAddress, {blockTag: 'latest'}) // INFURA requires use of a paid tier to access archive data blockTag 
+        await contract.getPriorVotes(walletAddress, blockNumber)
+        )
+    //, {
+    //    'blockTag: blockNumber
+    //})
+    console.log(result)
     return result
 }
 
@@ -60,11 +65,14 @@ export const handlerVotingPower = async (
         (obj.addresses as string[]) ??
         (throwError('Missing body "addresses" parameter') as unknown)
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const blockNumber: number = obj.snapshot as number
+
     const scores = []
     for (const addr of addresses) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const addrDict: {[id: string]: string | number} = {address: addr}
-        addrDict.score = 1
+        addrDict.score = parseInt(await getPriorBalanceOf(addr, blockNumber))
         scores.push(addrDict)
     }
     const resp = {score: scores}
