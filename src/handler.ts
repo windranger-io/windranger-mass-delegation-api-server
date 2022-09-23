@@ -47,7 +47,8 @@ const getCombinedVotingPowerOf = async (
 ): Promise<number> => {
     const provider = new ethers.providers.AlchemyProvider(
         'rinkeby',
-        'ALCHEMY_KEY'
+        'WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ'
+        // WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ alchemy
     )
     // RINKEBY COMP-like token
     const tokenContract: string =
@@ -182,7 +183,7 @@ export const handler = async (
     const method = event.httpMethod
     const path = event.path
 
-    if (method === 'POST' && path === '/voting-power') {
+    if (method === 'GET' && path === '/voting-power') {
         return handlerVotingPower(event, context)
     } else if (method === 'POST' && path === '/mass-delegate') {
         return handlerMassDelegate(event, context)

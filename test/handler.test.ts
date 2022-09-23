@@ -80,7 +80,7 @@ describe('Lambda', () => {
             ['tokenAddress']: 'one'
         })
         when(event.path).thenReturn('/voting-power')
-        when(event.httpMethod).thenReturn('POST')
+        when(event.httpMethod).thenReturn('GET')
 
         const jsonStr: string = testData.votingPowerRequest1
         when(event.body).thenReturn(jsonStr)
@@ -112,14 +112,43 @@ describe('Lambda', () => {
         when(event.body).thenReturn(jsonStr)
 
         const context = mock<Context>()
-        when(context.awsRequestId).thenReturn('199')
-        when(context.functionName).thenReturn('The best handler ever!')
 
         const result = await handler(instance(event), instance(context))
 
         // TODO populate with test data for comparision!
         const expectedResponse = JSON.stringify(
             JSON.parse(testData.massDelegateResponse1)
+        )
+        expect(result).deep.equals({
+            statusCode: 200,
+            body: expectedResponse
+        })
+    })
+    it('mass delegates to 2 addresses', async () => {
+        const event = mock<APIGatewayProxyEvent>()
+        when(event.queryStringParameters).thenReturn({
+            ['tokenAddress']: 'one'
+        })
+
+        // calling mass-delegate
+        when(event.path).thenReturn('/mass-delegate')
+        when(event.httpMethod).thenReturn('POST')
+        let jsonStr: string = testData.massDelegateRequest1
+        when(event.body).thenReturn(jsonStr)
+        let context = mock<Context>()
+        let result = await handler(instance(event), instance(context))
+
+        // calling mass-delegate
+        when(event.path).thenReturn('/voting-power')
+        when(event.httpMethod).thenReturn('GET')
+        jsonStr = testData.votingPowerRequest1
+        when(event.body).thenReturn(jsonStr)
+        context = mock<Context>()
+        result = await handler(instance(event), instance(context))
+
+        // checking voting-power response
+        const expectedResponse = JSON.stringify(
+            JSON.parse(testData.votingPowerResponse2)
         )
         expect(result).deep.equals({
             statusCode: 200,
