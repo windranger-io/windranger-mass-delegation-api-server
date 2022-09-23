@@ -22,6 +22,17 @@ MacOS can easily use Homebrew
 brew install postgres
 ```
 
+Role for tests
+```shell
+psql postgres
+
+CREATE ROLE unit_test_user 
+LOGIN
+CREATEDB 
+PASSWORD 'unit-test-p@ssw0rd';
+```
+
+
 Start the Postgres service
 ```shell
 brew services start postgres
