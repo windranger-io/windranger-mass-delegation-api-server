@@ -38,7 +38,7 @@ export async function createMassDelegationDatabase(): Promise<void> {
 
     await createMassDelegationTables(massDelegationDB)
 
-    await Database.reset()
+    Database.reset()
 }
 
 export async function dropMassDelegationDatabase() {
