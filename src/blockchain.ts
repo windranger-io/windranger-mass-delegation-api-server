@@ -38,8 +38,7 @@ export const getCombinedVotingPowerOf = async (
 ): Promise<number> => {
     const provider = new ethers.providers.AlchemyProvider(
         'rinkeby',
-        'WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ'
-        // WaR_ZIDPaoI8tUUpEYYwIBrRRU26yRWJ alchemy
+        'ALCHEMY_KEY'
     )
     // RINKEBY COMP-like token
     const tokenContract: string =
