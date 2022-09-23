@@ -15,9 +15,8 @@ export class Database {
         return this.instance
     }
 
-    static reset(): Promise<Pool> {
+    static reset(): void {
         this.instance = createPool()
-        return this.instance
     }
 }
 
