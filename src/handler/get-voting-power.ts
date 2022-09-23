@@ -35,7 +35,7 @@ export const handler = async (
     // eslint-disable-next-line @typescript-eslint/require-await
 ): Promise<APIGatewayProxyResult> => {
     log.info(
-        'handler id: %s, name: %s',
+        'getVotingPower id: %s, name: %s',
         context.awsRequestId,
         context.functionName
     )
