@@ -14,6 +14,11 @@ export class Database {
 
         return this.instance
     }
+
+    static async reset(): Promise<Pool> {
+        this.instance = createPool()
+        return this.instance
+    }
 }
 
 function createPool(): Pool {
@@ -39,6 +44,8 @@ function createPool(): Pool {
         database: dbName,
         port: dbPort,
         user: dbUsername,
-        password: dbPassword
+        password: dbPassword,
+        idleTimeoutMillis: 1000,
+        connectionTimeoutMillis: 1000
     })
 }

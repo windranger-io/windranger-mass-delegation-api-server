@@ -9,7 +9,7 @@ const dbHost = 'localhost'
 const dbPort = 5432
 const env = process.env
 
-export const postgresDB: ClientConfig = {
+const postgresDB: ClientConfig = {
     user: dbUser,
     password: dbPassword,
     database: 'postgres',
@@ -17,7 +17,7 @@ export const postgresDB: ClientConfig = {
     port: dbPort
 }
 
-export const massDelegationDB: ClientConfig = {
+const massDelegationDB: ClientConfig = {
     user: dbUser,
     password: dbPassword,
     database: dbName,
@@ -28,7 +28,7 @@ export const massDelegationDB: ClientConfig = {
 export async function createMassDelegationDatabase(): Promise<void> {
     await query(postgresDB, `CREATE DATABASE ${dbName}`)
 
-    // TODO maybe this process env stuff can be removed?
+    // Process.env is used by the Lambda's connection utility
     process.env = {...env}
     process.env.databaseUser = dbUser
     process.env.databasePassword = dbPassword
@@ -37,6 +37,8 @@ export async function createMassDelegationDatabase(): Promise<void> {
     process.env.databasePort = dbPort.toString()
 
     await createMassDelegationTables(massDelegationDB)
+
+    await Database.reset()
 }
 
 export async function dropMassDelegationDatabase() {
