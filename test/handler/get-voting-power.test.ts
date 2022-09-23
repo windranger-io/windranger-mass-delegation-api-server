@@ -20,7 +20,7 @@ describe('Get Voting Power Lambda', () => {
     it('answers voting power', async () => {
         const event = mock<APIGatewayProxyEvent>()
         when(event.queryStringParameters).thenReturn({
-            ['tokenAddress']: 'one'
+            ['useMockedBlockchain']: 'true'
         })
         when(event.path).thenReturn('/get-voting-power')
         when(event.httpMethod).thenReturn('GET')
@@ -34,7 +34,6 @@ describe('Get Voting Power Lambda', () => {
 
         const result = await handler(instance(event), instance(context))
 
-        // TODO populate with test data for comparision!
         const expectedResponse = JSON.stringify(
             JSON.parse(testData.votingPowerResponse1)
         )
@@ -43,5 +42,4 @@ describe('Get Voting Power Lambda', () => {
             body: expectedResponse
         })
     })
-
 })

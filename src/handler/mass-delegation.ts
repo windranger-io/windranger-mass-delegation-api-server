@@ -4,8 +4,6 @@ import {
 } from 'aws-lambda/trigger/api-gateway-proxy'
 import {Context} from 'aws-lambda'
 import {log} from '../../config/logging'
-//import {Database} from '../db/database'
-//import {throwError} from '../error'
 
 /**
  * Shape of the AWS Gateway event the handler has available

@@ -22,7 +22,7 @@ describe('Mass Delegation Lambda', () => {
     it('answers mass delegate', async () => {
         const event = mock<APIGatewayProxyEvent>()
         when(event.queryStringParameters).thenReturn({
-            ['tokenAddress']: 'one'
+            ['useMockedBlockchain']: 'true'
         })
         when(event.path).thenReturn('/mass-delegate')
         when(event.httpMethod).thenReturn('POST')
@@ -49,7 +49,7 @@ describe('Mass Delegation Lambda', () => {
     it('mass delegates to 2 addresses', async () => {
         const event = mock<APIGatewayProxyEvent>()
         when(event.queryStringParameters).thenReturn({
-            ['tokenAddress']: 'one'
+            ['useMockedBlockchain']: 'true'
         })
 
         // calling mass-delegate
