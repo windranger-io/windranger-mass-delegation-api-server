@@ -6,14 +6,16 @@ CREATE TABLE delegation
     proof             TEXT,
     delegated_weight  BIGINT,
     delegated_block   BIGINT,
-    PRIMARY KEY (token_address,
-                 delegator_address,
+    PRIMARY KEY (delegator_address,
                  delegatee_address)
 );
 CREATE INDEX delegation_index_delegator
     ON delegation (
-                   token_address,
                    delegator_address
+        );
+CREATE INDEX delegation_index_delegatee
+    ON delegation (
+                   delegatee_address
         );
 
 -- Delegators delegate their voting power to Delegatees
