@@ -1,5 +1,5 @@
 import {Client, ClientConfig} from 'pg'
-import {Database} from '../src/db/database'
+import {Database} from './database'
 import fs from 'fs'
 
 const dbUser = 'unit_test_user'
@@ -58,6 +58,23 @@ async function query(dbConfig: ClientConfig, sql: string): Promise<void> {
     await db.end()
 }
 
+async function queryWithParams(
+    dbConfig: ClientConfig,
+    sql: string,
+    params?: any[]
+): Promise<void> {
+    let queryParams = []
+    if (typeof params === 'undefined') {
+        queryParams = []
+    } else {
+        queryParams = params
+    }
+    const db = new Client(dbConfig)
+    await db.connect()
+    await db.query(sql, queryParams)
+    await db.end()
+}
+
 async function createMassDelegationTables(
     dbConfig: ClientConfig
 ): Promise<void> {
@@ -65,4 +82,30 @@ async function createMassDelegationTables(
         dbConfig,
         fs.readFileSync('./scripts/sql/create_tables.sql', 'utf8')
     )
+}
+
+export async function insertDelegateDb(
+    network: number,
+    tokenAddress: string,
+    delegator: string,
+    delegatee: string,
+    weight: number,
+    totalWeight: number,
+    blockNumber: number
+): Promise<void> {
+    const textQuery = `INSERT INTO delegation
+    (network, token_address, delegator_address, delegatee_address,
+    proof, delegated_weight, total_weight, delegated_block) 
+    VALUES 
+    ($1, decode($2,'hex'), decode($3,'hex'), decode($4,'hex'), $5, $6, $7, $8 ) RETURNING *`
+    await queryWithParams(massDelegationDB, textQuery, [
+        network,
+        tokenAddress.slice(2),
+        delegator.slice(2),
+        delegatee.slice(2),
+        '',
+        weight,
+        totalWeight,
+        blockNumber
+    ])
 }

@@ -5,7 +5,7 @@ import {mock, instance, when} from 'ts-mockito'
 import {
     createMassDelegationDatabase,
     dropMassDelegationDatabase
-} from '../postgres'
+} from '../../src/db/postgres'
 import {handler} from '../../src/handler/get-voting-power'
 import * as testData from '../testData'
 

@@ -5,7 +5,7 @@ import {mock, instance, when} from 'ts-mockito'
 import {
     createMassDelegationDatabase,
     dropMassDelegationDatabase
-} from '../postgres'
+} from '../../src/db/postgres'
 import {handler as massDelegateHandler} from '../../src/handler/mass-delegation'
 import {handler as getVotingPowerHandler} from '../../src/handler/get-voting-power'
 
@@ -27,7 +27,7 @@ describe('Mass Delegation Lambda', () => {
         when(event.path).thenReturn('/mass-delegate')
         when(event.httpMethod).thenReturn('POST')
 
-        const jsonStr: string = testData.massDelegateRequest1
+        const jsonStr: string = testData.massDelegateRequest0
         when(event.body).thenReturn(jsonStr)
 
         const context = mock<Context>()
@@ -39,7 +39,7 @@ describe('Mass Delegation Lambda', () => {
 
         // TODO populate with test data for comparision!
         const expectedResponse = JSON.stringify(
-            JSON.parse(testData.massDelegateResponse1)
+            JSON.parse(testData.massDelegateResponse0)
         )
         expect(result).deep.equals({
             statusCode: 200,
