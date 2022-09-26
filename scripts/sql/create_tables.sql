@@ -21,16 +21,15 @@ CREATE INDEX delegation_index_delegatee
 -- Delegators delegate their voting power to Delegatees
 CREATE TABLE delegators
 (
-    delegator_address CHAR(20),
+    delegator_address CHAR(20) PRIMARY KEY,
     trie_root         CHAR(32),
-    delegated_block   BIGINT,
-    PRIMARY KEY delegator_address
+    delegated_block   BIGINT
 );
 
 -- The single supported token's address, with support for contract migration
 CREATE TABLE token
 (
-    contract_address        CHAR(20),
+    contract_address        CHAR(20) PRIMARY KEY,
     delegation_from_block   BIGINT,
     delegated_to_block      BIGINT
 );

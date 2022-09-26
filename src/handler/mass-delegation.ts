@@ -31,8 +31,8 @@ export const handler = async (
         throwError('Missing tokenAddress parameter')
 
     const result = await Database.pool().query({
-        name: 'fetch-delegation-by-token-address',
-        text: 'SELECT * FROM delegation WHERE token_address = $1',
+        name: 'fetch-delegation-by-delegator-address',
+        text: 'SELECT * FROM delegation WHERE delegator_address = $1',
         values: [address]
     })
 
