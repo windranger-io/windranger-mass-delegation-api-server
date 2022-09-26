@@ -4,8 +4,26 @@ import {
 } from 'aws-lambda/trigger/api-gateway-proxy'
 import {Context} from 'aws-lambda'
 import {log} from '../../config/logging'
-import {Database} from '../db/database'
 import {throwError} from '../error'
+import {getCombinedVotingPowerOf} from '../blockchain'
+import {getCombinedVotingPowerOfMock} from '../../test/blockchainMock'
+
+export const getPriorVotingPowerOfImpl = async (
+    walletAddress: string,
+    blockNumber: number,
+    useMocked: boolean
+): Promise<number> => {
+    let retValue: number
+    if (useMocked) {
+        retValue = await getCombinedVotingPowerOfMock(
+            walletAddress,
+            blockNumber
+        )
+    } else {
+        retValue = await getCombinedVotingPowerOf(walletAddress, blockNumber)
+    }
+    return retValue
+}
 
 /**
  * Shape of the AWS Gateway event the handler has available
@@ -26,20 +44,36 @@ export const handler = async (
         event.queryStringParameters ??
         throwError('Missing query string parameters')
 
-    const address =
-        queryStringParameters.tokenAddress ??
-        throwError('Missing tokenAddress parameter')
+    const useMockedBlockchain =
+        queryStringParameters.useMockedBlockchain?.toLowerCase() === 'true' ||
+        false
 
-    const result = await Database.pool().query({
-        name: 'fetch-delegation-by-token-address',
-        text: 'SELECT * FROM delegation WHERE token_address = $1',
-        values: [address]
-    })
+    const reqBody = event.body || ''
 
-    const rows = result.rows
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const obj: {[id: string]: string | string[] | number} = JSON.parse(reqBody)
 
+    const addresses: string[] =
+        (obj.addresses as string[]) ??
+        (throwError('Missing body "addresses" parameter') as unknown)
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const blockNumber: number = obj.snapshot as number
+
+    const scores = []
+    for (const addr of addresses) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        const addrDict: {[id: string]: string | number} = {address: addr}
+        addrDict.score = await getPriorVotingPowerOfImpl(
+            addr,
+            blockNumber,
+            useMockedBlockchain
+        )
+        scores.push(addrDict)
+    }
+    const resp = {score: scores}
     return {
         statusCode: 200,
-        body: `Queries: ${rows.toString()}`
+        body: JSON.stringify(resp)
     }
 }
